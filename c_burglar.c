@@ -21,6 +21,11 @@ void choose_next_direction(t_vit * v)
 	t_pos obj;
 	objectif_ask(&obj);
 
+
+	//random à initialiser
+	srand((unsigned) time(NULL));
+
+
 	DEV("\n\nNous sommes sur une case %d\n", get_pos(e.pos.x, e.pos.y));
 
 	//Cas de l'enemy sur l'objectif
@@ -36,7 +41,7 @@ void choose_next_direction(t_vit * v)
 
 	//On supprime la possibilité du demi-tours
 	if(e.vit.x != 0) (e.vit.x > 0) ? (cross.left = 0) : (cross.right = 0);
-	else (e.vit.y < 0) ? (cross.top = 0) : (cross.bottom = 0);
+	else (e.vit.y > 0) ? (cross.top = 0) : (cross.bottom = 0);
 
 	DEV("demi-tours supprimé\n");
 	DEV("\n\nRoutes possibles :\nH:%d\nB:%d\nG:%d\nD:%d\n\n",cross.top,cross.bottom,cross.left,cross.right);
@@ -57,7 +62,6 @@ void choose_next_direction(t_vit * v)
 	if(ratio == 0)
 	{
 		DEV("\nRatio nul\n");
-		srand((unsigned) time(NULL));
       	if(rand() % 2)	ratio += 1;
       	else ratio -= 1;
    	}
@@ -98,23 +102,49 @@ void choose_next_direction(t_vit * v)
 
 	DEV("\n\nPLAN C\n");
 
-	//PLAN C
+	//PLAN C //Il reste potentiellement 2 routes possibles
+	t_vit routes_possibles[2];
+	int nb_routes_possibles = 0;
+	int route_choisie;
+
 	if(cross.top)
 	{
-		return set_vit(0,-1,v);
+		routes_possibles[nb_routes_possibles].x = 0;
+		routes_possibles[nb_routes_possibles].y = -1;
+		nb_routes_possibles++;
+		//return set_vit(0,-1,v);
 	}
 	if(cross.bottom)
 	{
-		return set_vit(0,1,v);
+		routes_possibles[nb_routes_possibles].x = 0;
+		routes_possibles[nb_routes_possibles].y = 1;
+		nb_routes_possibles++;
+		//return set_vit(0,1,v);
 	}
 	if(cross.left)
 	{
-		return set_vit(-1,0,v);
+		routes_possibles[nb_routes_possibles].x = -1;
+		routes_possibles[nb_routes_possibles].y = 0;
+		nb_routes_possibles++;
+		//return set_vit(-1,0,v);
 	}
 	if(cross.right)
 	{
-		return set_vit(1,0,v);
+		routes_possibles[nb_routes_possibles].x = 1;
+		routes_possibles[nb_routes_possibles].y = 0;
+		nb_routes_possibles++;
+		//return set_vit(1,0,v);
 	}
+
+		DEV("\nNombre de routes encore possibles : %d\n",nb_routes_possibles);
+
+
+	route_choisie = (rand() % nb_routes_possibles);
+
+			DEV("\nRoute choisie : %d\n",route_choisie);
+
+
+	return set_vit(routes_possibles[route_choisie].x, routes_possibles[route_choisie].y, v);
 
 
 }
