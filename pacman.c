@@ -1,9 +1,4 @@
-#include <ncurses.h>
-#include <string.h>
-#include <stdlib.h>
-#include "ini.h"
-#include "map.h"
-#include "out.h"
+#include "pacman.h"
 
 int main(void) {
 	
@@ -21,6 +16,7 @@ int main(void) {
     }
 
     penv();
+
 
     getch();
     endwin();

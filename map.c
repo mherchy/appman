@@ -32,3 +32,26 @@ t_map MAP = {
 	 {0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0},
 	 {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
 };
+
+int8_t get_pos(int8_t x, int8_t y)
+{
+	if(x < 0 || y < 0) return -1;
+	if(x >= ENV_N_COLS || y >= ENV_N_LINES) return -1;
+	else return MAP[y][x];
+}
+
+int8_t is_path(int8_t x, int8_t y)
+{
+	return (get_pos(x,y) > 0);
+}
+
+void get_crossroad(t_pos* p, t_cross* crossr)
+{
+	if(is_path(p->x,p->y))
+	{
+		crossr->top = (get_pos(p->x, p->y-1) > 0);
+		crossr->bottom = (get_pos(p->x, p->y+1) > 0);
+		crossr->left = (get_pos(p->x-1, p->y) > 0);
+		crossr->right = (get_pos(p->x+1, p->y) > 0);
+	}
+}
