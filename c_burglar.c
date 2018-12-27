@@ -22,7 +22,7 @@ void choose_next_direction(t_vit * v)
 	objectif_ask(&obj);
 
 
-	//random à initialiser
+	//random à initialiser (une seule fois)
 	srand((unsigned) time(NULL));
 
 

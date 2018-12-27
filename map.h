@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define E_OUT -0
+#define E_OUT -1
 #define E_WALL 0
 #define E_VOID 1
 #define E_COIN 2
