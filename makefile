@@ -1,11 +1,32 @@
-main_player.o: main_player.c
-	gcc -c main_player.c -lpthread -lncurses
+all: app_man
+
+app_man: main.c main_display.o shm_ini.o dev.o out.o map.o main_game.o main_enemy.o main_player.o
+	gcc main.c main_display.o shm_ini.o dev.o out.o map.o main_game.o main_enemy.o  main_player.o -pthread -lncurses -o app_man
+
+main_display.o: main_display.c
+	gcc -c main_display.c
+
+main_game.o: main_game.c
+	gcc -c main_game.c
 
 main_enemy.o: main_enemy.c
-	gcc -c main_enemy.c -lptread
+	gcc -c main_enemy.c
 
-test_display: main.c main_display.c shm_ini.c dev.c out.c map.c
-	gcc main.c main_display.c shm_ini.c dev.c out.c map.c -pthread -lncurses -o test_display
+main_player.o: main_player.c
+	gcc -c main_player.c
 
-test_game: main.c main_display.c shm_ini.c dev.c out.c map.c main_game.c main_enemy.c main_player.c
-	gcc main.c main_display.c shm_ini.c dev.c out.c map.c main_game.c main_enemy.c  main_player.c -pthread -lncurses -o test_game
+shm_ini.o: shm_ini.c
+	gcc -c shm_ini.c
+
+dev.o: dev.c
+	gcc -c dev.c
+
+out.o: out.c
+	gcc -c out.c
+
+map.o: map.c
+	gcc -c map.c
+
+
+clean:
+	rm *.o app_man
