@@ -1,41 +1,38 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include <stdint.h>
-
 #define E_OUT -1
 #define E_WALL 0
 #define E_VOID 1
 #define E_COIN 2
 
-#define ENV_N_LINES 30
-#define ENV_N_COLS 28
 
-typedef const uint8_t t_map[ENV_N_LINES][ENV_N_COLS];
+#include <stdint.h>
 
-typedef struct struct_crossroads {
-   unsigned int top:1;
-   unsigned int bottom:1;
-   unsigned int left:1;
-   unsigned int right:1;
-} t_cross;
+//shm
+#include <sys/shm.h>
 
-typedef struct s_position {
-	int8_t x;
-	int8_t y;
-} t_pos;
+#include <pthread.h>
+#include <semaphore.h>
 
-typedef struct s_velocity {
-	int8_t x;
-	int8_t y;
-} t_vit;
+#include "def/dimensions.h"
+#include "def/shared_struct.h"
+#include "def/coord.h"
+#include "def/shm_sem.h"
 
-extern t_map MAP;
+//dev
+#include "dev.h"
 
+void attach_map();
 
-int8_t get_pos(int8_t x, int8_t y);
-int8_t is_path(int8_t x, int8_t y);
-void get_crossroad(t_pos* p, t_cross* crossr);
+void detach_map();
 
+t_map_unit get_pos(int8_t x, int8_t y, t_map m);
+
+int8_t is_path(int8_t x, int8_t y, t_map m);
+
+t_cross *get_crossroad(t_pos *p, t_cross *crossr, t_map m);
+
+int get_uni_coord_id(int l, int c);
 
 #endif

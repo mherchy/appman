@@ -1,5 +1,9 @@
 #include <ncurses.h>
 #include "map.h"
+#include "def/shared_struct.h"
+
+//dev
+#include "dev.h"
 
 #define WALL_PAIR 100
 #define VOID_PAIR 101
@@ -10,5 +14,15 @@
 #define B3_PAIR 113
 #define B4_PAIR 114
 
-void penv();
+void print_env(t_map map);
+
+void print_enemies(t_overview *ov);
+
+void print_enemie(t_pos *pos, int cpair);
+
+void print_personnages(t_overview *ov);
+
+void refresh_screen();
+
+void blankscreen();
 void init_colors();
