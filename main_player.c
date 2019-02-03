@@ -12,11 +12,11 @@ int main_player() {
     char *lastkeypressed = (char *) shmat(shm_lastkey_id, NULL, 0);
     sem_t *sem_keyboard = sem_open(SHM_SEM_LASTKEY, O_RDWR);
 
-    char key;
+    char key = '0';
 
     while (1) {
         ch = getch();
-        DEV("touche préssée");
+        DEV("[KEYBOARD] touche préssée");
 
         switch (ch) {
             case KEY_LEFT:
@@ -31,16 +31,17 @@ int main_player() {
             case KEY_DOWN:
                 key = 'B';
                 break;
-            case KEY_EXIT:
-                /*kill(getppid(),SIGTERM);
-                exit(EXIT_SUCCESS);*/
+            case KEY_F(1):
+                DEV("[KEYBOARD] ARRET demandé par l'user");
+                kill(getppid(), SIGTERM);
+                //exit(EXIT_SUCCESS);
                 break;
             default:
                 key = '0';
                 break;
         }
 
-        DEVC("Touche : %c", key);
+        DEVC("[KEYBOARD] Touche : %c", key);
 
         // Inscription dans shm
         sem_wait(sem_keyboard);

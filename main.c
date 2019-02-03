@@ -24,12 +24,15 @@
 
 
 int debug;
+static int run;
+
+static void handler_main(int sig);
 
 int main(int argc, char const *argv[]) {
 
     pid_t game_pid, disp_pid, user_pid;
 
-
+    run = 1;
 
     // Mode debug = d* en seconde position
     if (argc >= 2 && (argv[1][0] == 'd' || argv[1][0] == 'D')) {
@@ -37,6 +40,14 @@ int main(int argc, char const *argv[]) {
         ini_fifo();
         DEV("FIFO IS ON");
     }
+
+
+    //Gestionnaire de signaux
+    struct sigaction action_quit;
+    action_quit.sa_flags = 0;
+    action_quit.sa_handler = handler_main;
+    sigaction(SIGTERM, &action_quit, NULL);
+
 
 
 
@@ -57,7 +68,7 @@ int main(int argc, char const *argv[]) {
     // INITIALISATION NCURSES
     initscr();            // Start curses mode
     cbreak();            // Line buffering disabled, Pass on everty thing to me
-    keypad(stdscr, TRUE);        // I need that nifty ESC
+    keypad(stdscr, TRUE);        // I need that nifty F1
 
     if (has_colors() == FALSE) {
         endwin();
@@ -94,7 +105,7 @@ int main(int argc, char const *argv[]) {
     int i;
     struct timespec timergame = {0, 200000000}; //0.2s
     struct timespec timerdisp = {0, 200000000}; //0.2s
-    for (i = 0; i < (NBITER); i++) {
+    while (run) {
         //Envoi de NBITER*2 signauxde test
         nanosleep(&timergame, NULL);
         DEV("SIG! (GAME)");
@@ -105,16 +116,11 @@ int main(int argc, char const *argv[]) {
         kill(disp_pid, SIGUSR1);
     }
 
-
-
-
-    //Signaux:
-    //ALARM : Passage à une nouvelle phase de jeu
-    //USR1 :
-
-    //Penser à boucler les shm
-
-    // FIN DU JEU
+    //Envoi des signaux de terminaison
+    DEV("Veuillez mourrir...");
+    kill(game_pid, SIGTERM);
+    kill(disp_pid, SIGTERM);
+    kill(user_pid, SIGTERM);
 
     DEV("J'attend vos morts");
     waitpid(disp_pid, NULL, 0);
@@ -124,8 +130,20 @@ int main(int argc, char const *argv[]) {
     //Fin de ncurses
     endwin();
 
+
     if (debug) exit_fifo();
 
 
     return 0;
+}
+
+
+static void handler_main(int sig) {
+
+    DEV("[HANDLER]");
+    if (sig == SIGTERM) {
+        DEV("[HANDLER] Arret demandé");
+        run = 0;
+    }
+
 }

@@ -2,7 +2,6 @@
 
 //PARTIE DEBUG
 #include "dev.h"
-#include "out.h"
 
 extern int shm_overview_id, shm_map_id;
 
@@ -13,6 +12,9 @@ int main_display() {
 
     //Initialisation
     init_colors();
+
+    //message de début
+    print_home_message("Appuyez sur F1 pour quitter en cours de partie");
 
     //Initialisation de la shm et des sémaphores attachés
     //MAP

@@ -14,6 +14,8 @@
 #define B3_PAIR 113
 #define B4_PAIR 114
 
+void print_home_message(char *str);
+
 void print_env(t_map map);
 
 void print_enemies(t_overview *ov);

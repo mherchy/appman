@@ -1,36 +1,20 @@
 #include "out.h"
 
+void print_home_message(char *str) {
+    clear();
+    addstr(str);
+    refresh();
+}
 
 // imprime la MAP
 void print_env(t_map map) {
+
     int debug = 0;
     int l, c;
 
-
-    //box(w, 0 , 0);
-    //wrefresh(w);
-    /*
-  if(debug)
-  {
-
-    char no = '0';
-
-    wprintw(w, "XX");
-    //Impression des n de col
-    for (c = 0; c < ENV_N_COLS; c++)
-    {
-      waddch(w,no+(c % 10));
-    }
-
-    waddch(w,'\n');
-    no = '0';
-
-  }
-*/
     //On nettoie l'écran
     clear();
     for (l = 0; l < ENV_N_LINES; l++) {
-        //if(debug) wprintw(w,"%2d", l);
         for (c = 0; c < ENV_N_COLS; c++) {
             t_map_unit unit = get_pos(c, l, map);
             switch (unit) {

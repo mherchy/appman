@@ -7,6 +7,9 @@
 
 #include "map.h"
 
+#include "out.h"
+
+
 //dev
 #include "dev.h"
 

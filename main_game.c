@@ -6,7 +6,9 @@
 extern int shm_overview_id, shm_lastkey_id, shm_map_id;
 
 //SIGNAUX
-static void handler(int sig) {}
+static void handler(int sig);
+
+static void handler_term(int sig);
 
 int main_game() {
     //DECLARATIONS
@@ -17,13 +19,11 @@ int main_game() {
 
     //SIGNAUX
     //Ini des signaux
-    //TODO essayer des trucs avec masque.c du TP1
-
-    struct sigaction action;
-    struct sigaction old_action;
-    action.sa_flags = 0;
-    action.sa_handler = handler;
-    sigaction(SIGUSR1, &action, &old_action);
+    //USR1
+    struct sigaction action_usr1;
+    action_usr1.sa_flags = 0;
+    action_usr1.sa_handler = handler;
+    sigaction(SIGUSR1, &action_usr1, NULL);
 
     //On ne réagit qu'au signaux d'alarme
     sigset_t sigset;
@@ -134,3 +134,5 @@ int main_game() {
 
 
 }
+
+static void handler(int sig) {}
