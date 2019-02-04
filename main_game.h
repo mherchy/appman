@@ -27,4 +27,15 @@
 //dev
 #include "dev.h"
 
+#define EVENT_NULL      0
+#define EVENT_SCORE     1
+#define EVENT_VICTOIRE  2
+#define EVENT_ECHEC     4
+
 int main_game();
+
+
+//SIGNAUX
+static void handler(int sig);
+
+static void handler_term(int sig);

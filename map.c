@@ -10,7 +10,7 @@
  */
 t_map_unit get_pos(int8_t x, int8_t y, t_map m) {
     int8_t retour;
-	if(x < 0 || y < 0) return -1;
+    if (x < 0 || y < 0) return -1;
     else if (x >= ENV_N_COLS || y >= ENV_N_LINES) return -1;
     else return m[get_uni_coord_id(x, y)];
 }
@@ -47,12 +47,17 @@ int get_uni_coord_id(int x, int y) {
 
 
 //Actions sur le terrain
-
+/**
+ *
+ * @param p
+ * @param m
+ * @return 1 si coin, 0 si rien, -1 si erreur
+ */
 int get_coin(t_pos *p, t_map m) {
     t_map_unit unit = get_pos(p->x, p->y, m);
     if (unit == E_COIN) {
         set_pos(p->x, p->y, E_VOID, m);
-        //score++
         return 1;
-    } else if (unit != E_VOID) return -1;
+    } else if (unit == E_VOID) return 0;
+    else return -1;
 }

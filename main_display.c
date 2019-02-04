@@ -5,8 +5,6 @@
 
 extern int shm_overview_id, shm_map_id;
 
-static void handler(int sig) {}
-
 
 int main_display() {
 
@@ -30,7 +28,16 @@ int main_display() {
     action.sa_handler = handler;
     sigaction(SIGUSR1, &action, &old_action);
 
-    //On ne réagit qu'au signaux d'alarme
+    //TERM
+    struct sigaction action_term;
+    sigset_t mask;
+    sigfillset(&mask);
+    action_term.sa_mask = mask;
+    action_term.sa_flags = 0;
+    action_term.sa_handler = handler_term;
+    sigaction(SIGTERM, &action_term, NULL);
+
+    //On ne réagit qu'au signaux d'USR1
     sigset_t sigset;
     sigemptyset(&sigset);
     sigaddset(&sigset, SIGUSR1);
@@ -73,4 +80,12 @@ int main_display() {
     }
 
 
+}
+
+
+static void handler(int sig) {}
+
+static void handler_term(int sig) {
+    DEV("[DISPLAY] Je meurs...");
+    exit(EXIT_SUCCESS);
 }

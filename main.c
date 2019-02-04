@@ -121,12 +121,12 @@ int main(int argc, char const *argv[]) {
     DEV("Veuillez mourrir...");
     kill(game_pid, SIGTERM);
     kill(disp_pid, SIGTERM);
-    kill(user_pid, SIGTERM);
+    //kill(user_pid, SIGTERM);
 
     DEV("J'attend vos morts");
     waitpid(disp_pid, NULL, 0);
     waitpid(game_pid, NULL, 0);
-    waitpid(user_pid, NULL, 0);
+    //waitpid(user_pid, NULL, 0);
 
     //Fin de ncurses
     endwin();
@@ -141,9 +141,8 @@ int main(int argc, char const *argv[]) {
 
 static void handler_main(int sig) {
 
-    DEV("[HANDLER]");
     if (sig == SIGTERM) {
-        DEV("[HANDLER] Arret demandé");
+        DEV("[MAIN HANDLER] Arret demandé");
         run = 0;
     }
 

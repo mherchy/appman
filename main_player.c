@@ -7,6 +7,7 @@ extern int shm_lastkey_id;
 // RANGE LE RESULTAT DANS LA MEMOIRE PARTAGÉ
 int main_player() {
     int ch;
+    int run = 1;
 
     //KEYBOARD
     char *lastkeypressed = (char *) shmat(shm_lastkey_id, NULL, 0);
@@ -14,7 +15,7 @@ int main_player() {
 
     char key = '0';
 
-    while (1) {
+    while (run) {
         ch = getch();
         DEV("[KEYBOARD] touche préssée");
 
@@ -35,6 +36,7 @@ int main_player() {
                 DEV("[KEYBOARD] ARRET demandé par l'user");
                 kill(getppid(), SIGTERM);
                 //exit(EXIT_SUCCESS);
+                run = 0;
                 break;
             default:
                 key = '0';
@@ -48,5 +50,9 @@ int main_player() {
         *lastkeypressed = key;
         sem_post(sem_keyboard);
     }
+
+    DEV("[KEYBOARD] Je me détruit");
+    shmdt(lastkeypressed);
+    sem_close(sem_keyboard);
 
 }

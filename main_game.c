@@ -5,10 +5,7 @@
 
 extern int shm_overview_id, shm_lastkey_id, shm_map_id;
 
-//SIGNAUX
-static void handler(int sig);
 
-static void handler_term(int sig);
 
 int main_game() {
     //DECLARATIONS
@@ -25,7 +22,16 @@ int main_game() {
     action_usr1.sa_handler = handler;
     sigaction(SIGUSR1, &action_usr1, NULL);
 
-    //On ne réagit qu'au signaux d'alarme
+    //TERM
+    struct sigaction action_term;
+    sigset_t mask;
+    sigfillset(&mask);
+    action_term.sa_mask = mask;
+    action_term.sa_flags = 0;
+    action_term.sa_handler = handler_term;
+    sigaction(SIGTERM, &action_term, NULL);
+
+    //On ne réagit qu'au signaux USR1
     sigset_t sigset;
     sigemptyset(&sigset);
     sigaddset(&sigset, SIGUSR1);
@@ -77,6 +83,10 @@ int main_game() {
 
         //WORK
 
+        int event = EVENT_NULL;
+
+        //MAJ DES POSITIONS
+
         //Je récupère la dernière volonté du joueur
         sem_wait(sem_keyboard);
         char choice = (*lastkeypressed);
@@ -99,11 +109,6 @@ int main_game() {
         sem_wait(sem_map);
         get_crossroad(&new_pos_joueur, &crossr, shared_map);
         sem_post(sem_map);
-        DEV("[GAME] Routes possibles :");
-        DEVD("[GAME] H:%d", crossr.top);
-        DEVD("[GAME] B:%d", crossr.bottom);
-        DEVD("[GAME] G:%d", crossr.left);
-        DEVD("[GAME] D:%d", crossr.right);
         switch (choice) {
             case 'H':
                 if (crossr.top) new_pos_joueur.y -= 1;
@@ -126,15 +131,39 @@ int main_game() {
         for (i = 0; i < NB_ENEMIES; i++) {
             //J'inscris les décisions individuelles des IA dans le shm
             sharerd_overview->enemy[i] = enemies_strategy[i].pos;
+
+            //Un énemie a-t'il rattrapé le joueur ?
+            if (enemies_strategy[i].pos.x == new_pos_joueur.x && enemies_strategy[i].pos.y == new_pos_joueur.y)
+                event |= EVENT_ECHEC;
         }
 
         sem_post(sem_overview);
 
-
         //Points
         sem_wait(sem_map);
-        get_coin(&new_pos_joueur, shared_map);
+        if (get_coin(&new_pos_joueur, shared_map))
+            event |= EVENT_SCORE;
         sem_post(sem_map);
+
+
+        //TRAITEMENTS POST-MOUVEMENTS
+        if (event & EVENT_SCORE) {
+            //score++
+        }
+
+        if (event & EVENT_ECHEC) {
+            //ON STOPPE LE JEU AVEC UN MESSAGE
+        } else if (event & EVENT_VICTOIRE) {
+            //ON STOPPE LE JEU AVEC UN MESSAGE
+        }
+
+        //VICTOIRE
+
+        //ECHEC
+
+        //SINON
+
+
 
     }
 
@@ -142,3 +171,8 @@ int main_game() {
 }
 
 static void handler(int sig) {}
+
+static void handler_term(int sig) {
+    DEV("[GAME] Je meurs...");
+    exit(EXIT_SUCCESS);
+}
