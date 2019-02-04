@@ -34,8 +34,7 @@ int main_display() {
     sigset_t sigset;
     sigemptyset(&sigset);
     sigaddset(&sigset, SIGUSR1);
-    //if (sigismember(&sigset, SIGUSR1)) //DEV("[AFFICHAGE] SIGUSR1 en fait partie");
-    int sigreturned, i;
+    int sigreturned;
 
     //message de début
     print_home_message("Appuyez sur F1 pour quitter en cours de partie");

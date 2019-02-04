@@ -23,10 +23,6 @@
 //dev
 #include "dev.h"
 
-void attach_map();
-
-void detach_map();
-
 t_map_unit get_pos(int8_t x, int8_t y, t_map m);
 
 int8_t is_path(int8_t x, int8_t y, t_map m);
@@ -34,5 +30,9 @@ int8_t is_path(int8_t x, int8_t y, t_map m);
 t_cross *get_crossroad(t_pos *p, t_cross *crossr, t_map m);
 
 int get_uni_coord_id(int l, int c);
+
+
+//Actions sur le terrain
+int get_coin(t_pos *p, t_map m);
 
 #endif

@@ -22,6 +22,7 @@
 #include "main_enemy.h"
 #include "def/shared_struct.h"
 #include "def/coord.h"
+#include "map.h"
 
 //dev
 #include "dev.h"

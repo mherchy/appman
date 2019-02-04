@@ -130,6 +130,12 @@ int main_game() {
 
         sem_post(sem_overview);
 
+
+        //Points
+        sem_wait(sem_map);
+        get_coin(&new_pos_joueur, shared_map);
+        sem_post(sem_map);
+
     }
 
 
