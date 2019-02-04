@@ -20,4 +20,6 @@ static void handler(int sig);
 
 static void handler_term(int sig);
 
+static void handler_atexit();
+
 #endif

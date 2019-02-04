@@ -5,7 +5,13 @@
 
 extern int shm_overview_id, shm_lastkey_id, shm_map_id;
 
-
+//Semaphores et SHM attachés
+static sem_t *sem_map;
+static sem_t *sem_overview;
+static sem_t *sem_keyboard;
+static t_map_unit *shared_map;
+static t_overview *shared_overview;
+static char *lastkeypressed;
 
 int main_game() {
     //DECLARATIONS
@@ -31,6 +37,8 @@ int main_game() {
     action_term.sa_handler = handler_term;
     sigaction(SIGTERM, &action_term, NULL);
 
+    atexit(handler_atexit);
+
     //On ne réagit qu'au signaux USR1
     sigset_t sigset;
     sigemptyset(&sigset);
@@ -49,14 +57,14 @@ int main_game() {
     //INITIALISATIONS
     //Initialisation de la mémoire partagée et des sémaphores
     //OVERVIEW
-    t_overview *sharerd_overview = (t_overview *) shmat(shm_overview_id, NULL, 0);
-    sem_t *sem_overview = sem_open(SHM_SEM_OVERVIEW, O_RDWR);
+    shared_overview = (t_overview *) shmat(shm_overview_id, NULL, 0);
+    sem_overview = sem_open(SHM_SEM_OVERVIEW, O_RDWR);
     //KEYBOARD
-    char *lastkeypressed = (char *) shmat(shm_lastkey_id, NULL, 0);
-    sem_t *sem_keyboard = sem_open(SHM_SEM_LASTKEY, O_RDWR);
+    lastkeypressed = (char *) shmat(shm_lastkey_id, NULL, 0);
+    sem_keyboard = sem_open(SHM_SEM_LASTKEY, O_RDWR);
     //MAP
-    t_map_unit *shared_map = (t_map_unit *) shmat(shm_map_id, NULL, 0);
-    sem_t *sem_map = sem_open(SHM_SEM_MAP, O_RDWR);
+    shared_map = (t_map_unit *) shmat(shm_map_id, NULL, 0);
+    sem_map = sem_open(SHM_SEM_MAP, O_RDWR);
 
 
     //BOUCLE PRINCIPALE
@@ -104,7 +112,7 @@ int main_game() {
         sem_wait(sem_overview);
 
         // JOUEUR
-        t_pos new_pos_joueur = sharerd_overview->app;
+        t_pos new_pos_joueur = shared_overview->app;
         t_cross crossr;
         sem_wait(sem_map);
         get_crossroad(&new_pos_joueur, &crossr, shared_map);
@@ -125,12 +133,12 @@ int main_game() {
             default:
                 break;
         }
-        sharerd_overview->app = new_pos_joueur;
+        shared_overview->app = new_pos_joueur;
 
         //IA
         for (i = 0; i < NB_ENEMIES; i++) {
             //J'inscris les décisions individuelles des IA dans le shm
-            sharerd_overview->enemy[i] = enemies_strategy[i].pos;
+            shared_overview->enemy[i] = enemies_strategy[i].pos;
 
             //Un énemie a-t'il rattrapé le joueur ?
             if (enemies_strategy[i].pos.x == new_pos_joueur.x && enemies_strategy[i].pos.y == new_pos_joueur.y)
@@ -175,4 +183,15 @@ static void handler(int sig) {}
 static void handler_term(int sig) {
     DEV("[GAME] Je meurs...");
     exit(EXIT_SUCCESS);
+}
+
+
+static void handler_atexit() {
+    DEV("[GAME] AT_EXIT");
+    sem_close(sem_map);
+    sem_close(sem_overview);
+    sem_close(sem_keyboard);
+    shmdt(shared_map);
+    shmdt(shared_overview);
+    shmdt(lastkeypressed);
 }
