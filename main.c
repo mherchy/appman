@@ -69,6 +69,7 @@ int main(int argc, char const *argv[]) {
     initscr();            // Start curses mode
     cbreak();            // Line buffering disabled, Pass on everty thing to me
     keypad(stdscr, TRUE);        // I need that nifty F1
+    curs_set(0);
 
     if (has_colors() == FALSE) {
         endwin();

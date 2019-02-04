@@ -26,7 +26,7 @@ void print_env(t_map map) {
 
                 case E_COIN:
                     attron(COLOR_PAIR(COIN_PAIR));
-                    addch(' ');
+                    addch('$');
                     attroff(COLOR_PAIR(COIN_PAIR));
                     break;
 
@@ -99,9 +99,8 @@ void init_colors() {
 
     init_pair(WALL_PAIR, COLOR_WHITE, COLOR_MAGENTA);
     init_pair(VOID_PAIR, COLOR_WHITE, COLOR_BLACK);
-    init_pair(COIN_PAIR, COLOR_YELLOW, COLOR_BLACK);
-    //init_pair(APP_PAIR, COLOR_YELLOW, COLOR_BLACK);
-    init_pair(APP_PAIR, COLOR_RED, COLOR_BLACK);
+    init_pair(COIN_PAIR, COLOR_MAGENTA, COLOR_BLACK);
+    init_pair(APP_PAIR, COLOR_YELLOW, COLOR_BLACK);
     init_pair(B1_PAIR, COLOR_RED, COLOR_BLACK);
     init_pair(B2_PAIR, COLOR_CYAN, COLOR_BLACK);
     init_pair(B3_PAIR, COLOR_GREEN, COLOR_BLACK);

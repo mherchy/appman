@@ -13,9 +13,6 @@ int main_display() {
     //Initialisation
     init_colors();
 
-    //message de début
-    print_home_message("Appuyez sur F1 pour quitter en cours de partie");
-
     //Initialisation de la shm et des sémaphores attachés
     //MAP
     t_map_unit *m = (t_map_unit *) shmat(shm_map_id, NULL, 0);
@@ -40,6 +37,8 @@ int main_display() {
     //if (sigismember(&sigset, SIGUSR1)) //DEV("[AFFICHAGE] SIGUSR1 en fait partie");
     int sigreturned, i;
 
+    //message de début
+    print_home_message("Appuyez sur F1 pour quitter en cours de partie");
 
     //BOUCLE
     while (1) {
