@@ -40,6 +40,7 @@ void print_env(t_map map) {
         }
         addch('\n');
     }
+
 }
 
 void print_enemies(t_overview *ov) {
@@ -83,6 +84,10 @@ void blankscreen() {
     refresh();
 }
 
+void print_status(char *str) {
+    mvaddstr(ENV_N_LINES + 1, 1, str);
+    refresh();
+}
 
 void init_colors() {
     /*  COULEURS DISPO :

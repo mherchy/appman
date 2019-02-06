@@ -66,6 +66,17 @@ int main_game() {
     shared_map = (t_map_unit *) shmat(shm_map_id, NULL, 0);
     sem_map = sem_open(SHM_SEM_MAP, O_RDWR);
 
+    //Initialisation du compteur de score, nombre de $ à récolleter
+    int beforeVictoire = 0, score = 0;
+    int8_t c, l;
+    sem_wait(sem_map);
+    for (l = 0; l < ENV_N_LINES; l++) {
+        for (c = 0; c < ENV_N_COLS; c++) {
+            if (get_pos(c, l, shared_map) == 2) beforeVictoire++;
+        }
+    }
+    sem_post(sem_map);
+
 
     //BOUCLE PRINCIPALE
     while (1) {
@@ -154,15 +165,22 @@ int main_game() {
         sem_post(sem_map);
 
 
-        //TRAITEMENTS POST-MOUVEMENTS
+
+
+        //TRAITEMENTS DES EVENTS
         if (event & EVENT_SCORE) {
-            //score++
+            score += 100;
+            beforeVictoire--;
+            if (beforeVictoire == 0) event |= EVENT_VICTOIRE;
         }
 
+        //FIN DE JEU
         if (event & EVENT_ECHEC) {
             //ON STOPPE LE JEU AVEC UN MESSAGE
+            DEV("Le joueur a perdu...");
         } else if (event & EVENT_VICTOIRE) {
             //ON STOPPE LE JEU AVEC UN MESSAGE
+            DEV("Le joueur a gagné");
         }
 
         //VICTOIRE
@@ -170,6 +188,7 @@ int main_game() {
         //ECHEC
 
         //SINON
+
 
 
 
