@@ -21,7 +21,7 @@
 #define DEVS(str, s) debug_fifo_string(str,s)
 #define DEVP(str, s) debug_fifo_ptr(str,s)
 #define ERRNG(var)  if((var)==-1)debug_fifo(strerror(errno));
-#define ERRSI(var, forb)  if(var==forb)debug_fifo(strerror(errno));
+#define ERRSI(var, forb)  if((var)==forb)debug_fifo(strerror(errno));
 
 
 
