@@ -24,6 +24,8 @@ void print_enemie(t_pos *pos, int cpair);
 
 void print_personnages(t_overview *ov);
 
+void print_status(char *str);
+
 void refresh_screen();
 
 void init_colors();
