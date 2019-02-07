@@ -117,9 +117,9 @@ t_vit *choose_next_direction(t_enemy *e, t_pos *obj, t_map map, sem_t *sem_map) 
     sem_wait(sem_map);
 
     //Cas de l'enemy sur l'objectif
-    if (e->pos.x == obj->x && e->pos.y == obj->y) return -1; //TODO
+    if (e->pos.x == obj->x && e->pos.y == obj->y) return NULL;
     //Sortie de jeu
-    if (get_pos(e->pos.x, e->pos.y, map) == E_WALL) return -1; //TODO ERREUR
+    if (get_pos(e->pos.x, e->pos.y, map) == E_WALL) return NULL;
 
     //prendre en compte les directions possibles à la set_vit(0,1,v)e
     t_cross cross;

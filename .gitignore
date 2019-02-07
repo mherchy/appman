@@ -1,5 +1,4 @@
 /.idea/
-/old/
 /cmake-build-debug/
 *.o
 /app_man

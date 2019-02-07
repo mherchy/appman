@@ -99,6 +99,13 @@ int main(int argc, char const *argv[]) {
         printf("Your terminal does not support color\n");
         exit_fifo();
         exit(EXIT_FAILURE);
+    } else if (LINES < ENV_N_LINES || COLS < ENV_N_COLS) {
+        endwin();
+        printf("Votre terminal est trop petit pour afficher correctement le jeu.\n");
+        printf("Merci d'agrandir celui-ci de manière à avoir au moins %d lignes et %d colones\n", ENV_N_LINES,
+               ENV_N_COLS);
+        exit_fifo();
+        exit(EXIT_FAILURE);
     }
 
     //PROC AFFICHAGE
