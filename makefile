@@ -18,7 +18,7 @@ main_player.o: main_player.c
 shm_ini.o: shm_ini.c
 	gcc -c shm_ini.c
 
-dev.o: dev.c
+dev.o: dev.c debug/debug
 	gcc -c dev.c
 
 out.o: out.c
@@ -28,5 +28,14 @@ map.o: map.c
 	gcc -c map.c
 
 
+
+#DEBUG
+debug/debug: debug/debug.c debug/debugappman
+	gcc debug/debug.c -o debug/debug
+
+debug/debugappman:
+	mkfifo -m0777 debug/debugappman
+
+
 clean:
-	rm *.o app_man
+	rm *.o app_man debug/debugappman debug/debug
