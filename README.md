@@ -2,13 +2,13 @@
 
 Multi-thread pacman clone in C
 
-##Introduction
+## Introduction
 
 APP-MAN est un jeu vidéo inspiré de PAC-MAN. Pour le réaliser nous avons utilisé des outils étudiés en PRS ainsi qu&#39;en LPE.
 
 
 
-##Principe du jeu
+## Principe du jeu
 
 Tout d&#39;abord, nous allons voir le principe du jeu original : PAC-MAN.
 
@@ -20,7 +20,7 @@ Pour notre version APP-MAN, nous n&#39;avons pas pu développer toutes les fonct
 
 
 
-##Contraintes
+## Contraintes
 
 Pour réaliser ce jeu, nous avons eu affaire  à trois grandes contraintes.
 
@@ -30,9 +30,9 @@ La deuxième contrainte est la nécessité d&#39;avoir une gestion du temps dans
 
  La troisième contrainte est la mise en place d&#39;une intelligence artificielle afin de gérer les déplacements des fantômes de façon à ce qu&#39;ils se dirige vers le joueur tout en respectant les règles de déplacement du labyrinthe.
 
-##Architecture choisie
+## Architecture choisie
 
-###Outils utilisés :
+### Outils utilisés :
 
 - _Forks : Le processus père produit 3 processus fils qui vont chacun gérer un traitement particulier : le système de jeu, l&#39;écoute clavier et l&#39;affichage. Le fork permet de faire fonctionner ces traitements en parallèle et de manière autonomes._
 - _Threads : le processus Jeu créé 4 threads à chaque temporisation, qui correspondent aux IA. Les threads permettent de lancer rapidement des traitements parallèles qui dépendent d&#39;un thread principale._
@@ -43,7 +43,7 @@ La deuxième contrainte est la nécessité d&#39;avoir une gestion du temps dans
   - _TERM : Le processus joueur envoi un signal SIGTERM au processus père en cas d&#39;appuie sur la touche F1. Le père s&#39;occupe ensuite de tuer ses processus fils_
 - _Tubes (debug) : Afficher des informations sur un autre terminal, car le terminal principal est bloqué par ncurses_
 
-###Chronologie :
+### Chronologie :
 
 1. main : initialisation
 	* fifo
@@ -77,12 +77,12 @@ La deuxième contrainte est la nécessité d&#39;avoir une gestion du temps dans
 
 
 
-##Difficultés rencontrés
+## Difficultés rencontrés
 
 - Le problème majeur rencontré est la difficulté de déboguer. Cette difficulté est liée à l&#39;utilisation de ncurses car ncurses &quot;bloque&quot; le terminal est empêche donc l&#39;utilisation de printf et l&#39;affichage de logs.
   - Pour répondre à ce problème d&#39;affichage pour les logs et le débogage nous avons dû utiliser les tubes  afin d&#39;envoyer les informations sur un autre terminal.
 
-##Conclusion
+## Conclusion
 
 APP-MAN nous a permis d&#39;utiliser la plupart des technologies étudiées en PRS (thread, fork, sémaphore, tube, mémoire partagée et signaux) et même plus encore avec l&#39;utilisation de ncurses pour l&#39;affichage. Grâce à ce jeu nous avons donc pu mieux comprendre et mieux maîtriser ces outils.
 
