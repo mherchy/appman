@@ -1,33 +1,47 @@
 #include "map.h"
 
-//NO DATA HERE
+/**
+ * Utilitaire de données de la map
+ * Un sémaphore doit étre ouvert avant utilisation de ces fonctions
+ */
 
 /**
- * Utilisation avec un sémaphore
+ * Récupérer l'information de ma map correspondant à la position donné
  * @param x
  * @param y
+ * @param m
  * @return
  */
 t_map_unit get_pos(int8_t x, int8_t y, t_map m) {
-    int8_t retour;
     if (x < 0 || y < 0) return -1;
     else if (x >= ENV_N_COLS || y >= ENV_N_LINES) return -1;
     else return m[get_uni_coord_id(x, y)];
 }
 
+/**
+ * Réecrire l'information de ma map correspondant à la position donné
+ * @param x
+ * @param y
+ * @param val
+ * @param m
+ */
 void set_pos(int8_t x, int8_t y, t_map_unit val, t_map m) {
     m[get_uni_coord_id(x, y)] = val;
 }
 
 /**
- * Utilisatio avec un sémaphore
+ * La case x,y est-elle un chemin (ou bien un mur ?)
+ * @param x
+ * @param y
+ * @param m
+ * @return
  */
 int8_t is_path(int8_t x, int8_t y, t_map m) {
     return (get_pos(x, y, m) > 0);
 }
 
 /**
- * Utilisatio avec un sémaphore
+ * Récupération des chemins disponibles pour la coordonnée pos
  */
 t_cross *get_crossroad(t_pos *p, t_cross *crossr, t_map m) {
     if (is_path(p->x, p->y, m)) {
@@ -39,16 +53,19 @@ t_cross *get_crossroad(t_pos *p, t_cross *crossr, t_map m) {
     return crossr;
 }
 
+/**
+ * Récupération de l'index du t_map_unit dans la le t_map[] en fonction de ses coordonnées
+ * @param x
+ * @param y
+ * @return
+ */
 int get_uni_coord_id(int x, int y) {
     return (y * ENV_N_COLS) + x;
 }
 
 
-
-
-//Actions sur le terrain
 /**
- *
+ * Si la position p contient un $, le ramasser
  * @param p
  * @param m
  * @return 1 si coin, 0 si rien, -1 si erreur

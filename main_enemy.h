@@ -31,17 +31,17 @@
 #include "dev.h"
 
 
-#define DIR_LEFT -1
-#define DIR_RIGHT 1
-
-#define DIR_TOP -1
-#define DIR_BOTTOM 1
-
+/**
+ * Struct t_enemy
+ * Correspond au résonnement et aux choix des énemies
+ * Sa position est par la suite copié dans la variable partagée overview
+ */
 typedef struct s_burglar {
     uint8_t id;
     t_pos pos;
     t_vit vit;
 } t_enemy;
+
 
 void *main_enemy(void *param);
 

@@ -3,32 +3,52 @@
 #include <stdio.h>
 #include <errno.h>
 
-//IPC key
+/**
+ * EXPLICATIONS : SHM
+ * Il y a en tout 3 shm
+ *  - overview (structure*) : placement des personnages sur la matrice
+ *  - map (tableau) : configuration du terrain (mur, espace vide, coin ...)
+ *  - lastkey (char*) : dernière touche préssée par le joueur
+ */
+
+/**
+ * SHM ID
+ * GLOBAUX POUR TOUS LES PROCESSUS : SHMs (int)
+ */
+int shm_overview_id, shm_lastkey_id, shm_map_id;
+
+/**
+ * IPC keys
+ */
 static key_t key1, key2, key3;
 
+/**
+ * Sémaphores attachés aux shm
+ */
 static sem_t *sem_overview;
 static sem_t *sem_key;
 static sem_t *sem_map;
 
-//GLOBAL POUR TOUS LES PROCESSUS : SHMs (int)
-int shm_overview_id, shm_lastkey_id, shm_map_id;
 
-
-//main
+/**
+ * Fonction d'initialisation de la mémoire partagée
+ * et des sémaphores attachés
+ */
 void ini_common_shm() {
 
+    //CLES
     key1 = ftok(__FILE__, 1);
-    //DEVD("KEY %d",key1);
     key2 = ftok(__FILE__, 2);
-    //DEVD("KEY %d",key2);
     key3 = ftok(__FILE__, 3);
-    //DEVD("KEY %d",key3);
 
-    // Déclarations des shm
-    //DEV("Déclarations des shm");
+
+
+    /**
+     * Déclarations des shm
+     */
 
     shm_overview_id = shmget(key1, sizeof(t_overview), 0666 | IPC_CREAT);
-    ERRNG(shm_overview_id);
+    ERRNG(shm_overview_id); //Tester si erreur
 
     shm_lastkey_id = shmget(key2, sizeof(char), 0666 | IPC_CREAT);
     ERRNG(shm_lastkey_id);
@@ -36,20 +56,20 @@ void ini_common_shm() {
     shm_map_id = shmget(key3, sizeof(t_map), 0666 | IPC_CREAT);
     ERRNG(shm_map_id);
 
-    //Initialisations des semaphores attachés
-    //DEV("Initialisations des semaphores attachés");
 
-    //DEV("overview");
+
+    /**
+     * Initialisations des semaphores attachés
+     */
+
     sem_overview = sem_open(SHM_SEM_OVERVIEW, O_CREAT | O_RDWR, 0777, 1);
-    ERRSI(sem_overview, SEM_FAILED);
+    ERRSI(sem_overview, SEM_FAILED); //Tester si erreur
     sem_init(sem_overview, 0, 1);
 
-    //DEV("lastkey");
     sem_key = sem_open(SHM_SEM_LASTKEY, O_CREAT | O_RDWR, 0777, 1);
     ERRSI(sem_key, SEM_FAILED);
     sem_init(sem_key, 0, 1);
 
-    //DEV("map");
     sem_map = sem_open(SHM_SEM_MAP, O_CREAT | O_RDWR, 0777, 1);
     ERRSI(sem_map, SEM_FAILED);
     sem_init(sem_map, 0, 1);
@@ -66,17 +86,19 @@ void ini_common_shm() {
 
 
 
-// Fonctions d'Initialisation
+/**
+ * Fonctions d'Initialisation des données
+ */
 
 
+/**
+ * Initialisation des données de la map
+ */
 void ini_map() {
-
-    //DEV("Fonction ini map");
-
 
     int l, c;
 
-    // Map local
+    // Map local, contiens les couloirs, murs et $
     t_map_unit map_init[ENV_N_LINES][ENV_N_COLS] = {
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0},
@@ -110,55 +132,70 @@ void ini_map() {
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
     };
 
-    //DEV("Map locale faite");
+    /**
+     * Déclaration d'un pointeur vers la shm map
+     */
+    t_map_unit *shared_map;
+    shared_map = (t_map_unit *) shmat(shm_map_id, NULL, 0);
 
 
-    t_map_unit *map;
-    map = (t_map_unit *) shmat(shm_map_id, NULL, 0);
-    //DEVP("map ptr = %d",map);
-
-
-    //DEV("Map part ini");
-
-
+    /**
+     * Copie des données
+     * de map_init vers shared_map
+     */
     sem_wait(sem_map);
     int i = 0;
     for (l = 0; l < ENV_N_LINES; l++) {
         for (c = 0; c < ENV_N_COLS; c++) {
-            map[i] = map_init[l][c];
+            shared_map[i] = map_init[l][c];
             i++;
         }
     }
     sem_post(sem_map);
 
-    //DEV("fini");
 
-
-    shmdt(map);
+    //Détachement du shm
+    shmdt(shared_map);
 
 }
 
+
+/**
+ * Initialisation des données de la structure overview
+ */
 void ini_overview() {
 
+    //Données en local
     t_overview ov_init = {{{1, 1}, {26, 1}, {1, 28}, {26, 28}},
                           {13,     22}};
 
+    //Attachement du shm
     t_overview *ov = (t_overview *) shmat(shm_overview_id, NULL, 0);
+
+    //Copie des données
     sem_wait(sem_overview);
     *ov = ov_init;
     sem_post(sem_overview);
+
+    //Déttachement du shm
     shmdt(ov);
 
 }
 
+
+/**
+ * Initialisation des données d'interraction utilisateur
+ */
 void ini_key() {
+
+    //Attachement du shm
     char *lastkeypressed = (char *) shmat(shm_lastkey_id, NULL, 0);
-    sem_t *sem_keyboard = sem_open(SHM_SEM_LASTKEY, O_RDWR);
 
-    sem_wait(sem_keyboard);
+    //Initialisation de la donnée
+    sem_wait(sem_key);
     *lastkeypressed = '0';
-    DEVC("[INI] le char initialisé est %c", *lastkeypressed);
-    sem_post(sem_keyboard);
-    shmdt(lastkeypressed);
+    sem_post(sem_key);
 
+    //Déttachement du shm
+    shmdt(lastkeypressed);
 }

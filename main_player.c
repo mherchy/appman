@@ -2,14 +2,16 @@
 
 extern int shm_lastkey_id;
 
-
-// DEAMON DE GESTION DU CLAVIER
-// RANGE LE RESULTAT DANS LA MEMOIRE PARTAGÉ
+/**
+ * ECOUTE CLAVIER
+ * @return
+ */
 int main_player() {
+
     int ch;
     int run = 1;
 
-    //KEYBOARD
+    //SHM KEYBOARD ATACHEMENT
     char *lastkeypressed = (char *) shmat(shm_lastkey_id, NULL, 0);
     sem_t *sem_keyboard = sem_open(SHM_SEM_LASTKEY, O_RDWR);
 
@@ -17,7 +19,6 @@ int main_player() {
 
     while (run) {
         ch = getch();
-        DEV("[KEYBOARD] touche préssée");
 
         switch (ch) {
             case KEY_LEFT:
@@ -33,9 +34,7 @@ int main_player() {
                 key = 'B';
                 break;
             case KEY_F(1):
-                DEV("[KEYBOARD] ARRET demandé par l'user");
                 kill(getppid(), SIGTERM);
-                //exit(EXIT_SUCCESS);
                 run = 0;
                 break;
             default:
@@ -43,7 +42,6 @@ int main_player() {
                 break;
         }
 
-        DEVC("[KEYBOARD] Touche : %c", key);
 
         // Inscription dans shm
         sem_wait(sem_keyboard);
@@ -51,7 +49,6 @@ int main_player() {
         sem_post(sem_keyboard);
     }
 
-    DEV("[KEYBOARD] Je me détruit");
     shmdt(lastkeypressed);
     sem_close(sem_keyboard);
 

@@ -18,8 +18,4 @@ int main(int argc, char const *argv[]) {
         }
     }
 
-    close(sortieServeur);
-
-    return 0;
-
 }
